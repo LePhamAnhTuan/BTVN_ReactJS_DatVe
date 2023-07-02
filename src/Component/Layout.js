@@ -16,7 +16,7 @@ export default class Layout extends Component {
     let newValue = this.state.value;
     newValue[id] = value;
     this.setState({
-      [id]: value,
+      value: { [id]: value },
     });
     if (this.state.value.Numseats == "" || this.state.value.Username == "") {
       this.setState({
@@ -77,11 +77,11 @@ export default class Layout extends Component {
       });
     } else if (checked == false) {
       let arrNew = newValue.filter((item) => item !== value);
-
       this.setState({
         ...this.state,
         qualitySeat: this.state.qualitySeat - 1,
         value: {
+          ...this.state.value,
           arrSeat: arrNew,
         },
       });
