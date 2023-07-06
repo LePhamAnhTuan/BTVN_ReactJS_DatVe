@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { arrSeats } from "./DataArrSeats";
 import HandleSeat from "./HandleSeat";
+import { saveLocal, getLocal, removeLocal } from "./LocalStorage";
+
 export default class Layout extends Component {
   state = {
     value: { Username: "", Numseats: "", arrSeat: [] },
@@ -33,21 +35,62 @@ export default class Layout extends Component {
       });
     }
   };
-  cancelSeat = (event) => {
-    console.log("backtotop");
+  clearInput = () => {
+    document.getElementById("Username").value = "";
+    document.getElementById("Numseats").value = "";
+    document.getElementById("Username").disabled = false;
+    document.getElementById("Numseats").disabled = false;
+    this.setState({
+      ...this.state,
+      value: { Username: "", Numseats: "", arrSeat: [] },
+      qualitySeat: 0,
+
+      error: "",
+      res: "",
+    });
+  };
+  disabledChecked = (arrThanhToan) => {
+    let hangSeats = arrSeats.map((item) =>
+      item.danhSachGhe.map((item1) => item1.soGhe)
+    );
+    let arrIdSeat = [];
+    let idSeats = hangSeats.map((item) => {
+      return item.map((item1) => {
+        return arrIdSeat.push(item1);
+      });
+    });
+
+    arrThanhToan.map((item) => {
+      item.arrSeat.map((item1) => {
+        arrIdSeat.map((item2) => {
+          if (item2 != item1) {
+            document.getElementById(`${item2}`).checked = false;
+            document.getElementById(`${item2}`).disabled = false;
+          }
+        });
+        document.getElementById(`${item1}`).checked = true;
+        document.getElementById(`${item1}`).disabled = true;
+      });
+    });
+  };
+
+  clearSeat = (event) => {
     window.scrollTo(0, 0);
     this.setState({
       ...this.state,
-      Username: " ",
-      Numseats: " " * 1,
-      arrSeat: [],
+      value: { Username: "", Numseats: "", arrSeat: [] },
       qualitySeat: 0,
       disabledInput: false,
-      disabledBtn: false,
+      disabledBtn: true,
       disabledCheck: false,
       error: "",
       res: "",
     });
+    this.state.value.arrSeat.map((item) => {
+      document.getElementById(item).checked = false;
+      document.getElementById(item).disabled = false;
+    });
+    // this.componentDidUpdate();
   };
   submitSeat = (event) => {
     this.state.qualitySeat == this.state.value.Numseats
@@ -62,7 +105,6 @@ export default class Layout extends Component {
       : this.setState({
           error: "Chưa đúng số lượng ghế mà bạn cần!",
         });
-    console.log(this.state);
   };
 
   getChecked = (event) => {
@@ -87,24 +129,36 @@ export default class Layout extends Component {
       });
     }
   };
+  shouldComponentUpdate(newProps, newState) {
+    return true;
+  }
+  componentDidMount() {
+    const arrSeats = getLocal();
+
+    if (arrSeats) {
+      let newARR = [];
+      for (var i = 0; i < arrSeats.length; i++) {
+        newARR.push(arrSeats[i].arrSeat);
+      }
+      newARR.map((item) => {
+        item.map((item1) => {
+          document.getElementById(`${item1}`).checked = true;
+          document.getElementById(`${item1}`).disabled = true;
+        });
+      });
+    }
+  }
 
   render() {
-    console.log(this.state);
     return (
       <div>
         <div>
           <div>
             <link rel="stylesheet" href="/assests/css/font-awesome.min.css" />
-            <style
-              dangerouslySetInnerHTML={{
-                __html:
-                  '\n* {\n  box-sizing: border-box;\n  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;\n}\n\n\n#w3lDemoBar.w3l-demo-bar {\n  top: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 9999;\n  padding: 40px 5px;\n  padding-top:70px;\n  margin-bottom: 70px;\n  background: #0D1326;\n  border-top-left-radius: 9px;\n  border-bottom-left-radius: 9px;\n}\n\n#w3lDemoBar.w3l-demo-bar a {\n  display: block;\n  color: #e6ebff;\n  text-decoration: none;\n  line-height: 24px;\n  opacity: .6;\n  margin-bottom: 20px;\n  text-align: center;\n}\n\n#w3lDemoBar.w3l-demo-bar span.w3l-icon {\n  display: block;\n}\n\n#w3lDemoBar.w3l-demo-bar a:hover {\n  opacity: 1;\n}\n\n#w3lDemoBar.w3l-demo-bar .w3l-icon svg {\n  color: #e6ebff;\n}\n#w3lDemoBar.w3l-demo-bar .responsive-icons {\n  margin-top: 30px;\n  border-top: 1px solid #41414d;\n  padding-top: 40px;\n}\n#w3lDemoBar.w3l-demo-bar .demo-btns {\n  border-top: 1px solid #41414d;\n  padding-top: 30px;\n}\n#w3lDemoBar.w3l-demo-bar .responsive-icons a span.fa {\n  font-size: 26px;\n}\n#w3lDemoBar.w3l-demo-bar .no-margin-bottom{\n  margin-bottom:0;\n}\n.toggle-right-sidebar span {\n  background: #0D1326;\n  width: 50px;\n  height: 50px;\n  line-height: 50px;\n  text-align: center;\n  color: #e6ebff;\n  border-radius: 50px;\n  font-size: 26px;\n  cursor: pointer;\n  opacity: .5;\n}\n.pull-right {\n  float: right;\n  position: fixed;\n  right: 0px;\n  top: 70px;\n  width: 90px;\n  z-index: 99999;\n  text-align: center;\n}\n/* ============================================================\nRIGHT SIDEBAR SECTION\n============================================================ */\n\n#right-sidebar {\n  width: 90px;\n  position: fixed;\n  height: 100%;\n  z-index: 1000;\n  right: 0px;\n  top: 0;\n  margin-top: 60px;\n  -webkit-transition: all .5s ease-in-out;\n  -moz-transition: all .5s ease-in-out;\n  -o-transition: all .5s ease-in-out;\n  transition: all .5s ease-in-out;\n  overflow-y: auto;\n}\n\n\n/* ============================================================\nRIGHT SIDEBAR TOGGLE SECTION\n============================================================ */\n\n.hide-right-bar-notifications {\n  margin-right: -300px !important;\n  -webkit-transition: all .3s ease-in-out;\n  -moz-transition: all .3s ease-in-out;\n  -o-transition: all .3s ease-in-out;\n  transition: all .3s ease-in-out;\n}\n\n\n\n@media (max-width: 992px) {\n  #w3lDemoBar.w3l-demo-bar a.desktop-mode{\n      display: none;\n\n  }\n}\n@media (max-width: 767px) {\n  #w3lDemoBar.w3l-demo-bar a.tablet-mode{\n      display: none;\n\n  }\n}\n@media (max-width: 568px) {\n  #w3lDemoBar.w3l-demo-bar a.mobile-mode{\n      display: none;\n  }\n  #w3lDemoBar.w3l-demo-bar .responsive-icons {\n      margin-top: 0px;\n      border-top: none;\n      padding-top: 0px;\n  }\n  #right-sidebar,.pull-right {\n      width: 90px;\n  }\n  #w3lDemoBar.w3l-demo-bar .no-margin-bottom-mobile{\n      margin-bottom: 0;\n  }\n}\n',
-              }}
-            />
           </div>
 
           <h1>Movie Seat Selection</h1>
-          <div className="container">
+          <div className="container ">
             <div className="w3ls-reg">
               <div className="inputForm">
                 <h2>Nhập thông tin cá nhân và chọn số chỗ</h2>
@@ -157,7 +211,7 @@ export default class Layout extends Component {
               </ul>
 
               <div
-                className="seatStructure txt-center"
+                className="seatStructure mx-5 text-center"
                 style={{ overflowX: "auto" }}
               >
                 <p id="notification" />
@@ -187,10 +241,12 @@ export default class Layout extends Component {
                             return (
                               <td key={index1}>
                                 <input
+                                  id={item1.soGhe}
                                   disabled={this.state.disabledCheck}
                                   onChange={this.getChecked}
                                   type="checkbox"
                                   className="seats"
+                                  // checked={defaultValue == "A1" ? true : false}
                                   defaultValue={item1.soGhe}
                                 />
                               </td>
@@ -207,8 +263,11 @@ export default class Layout extends Component {
               </div>
 
               <HandleSeat
-                cancelSeat={this.cancelSeat}
+                clearSeat={this.clearSeat}
                 value={this.state.value}
+                clearInput={this.clearInput}
+                disabledChecked={this.disabledChecked}
+                disBtnThanhToan={this.state.disabledBtn == true ? false : true}
               />
             </div>
           </div>
