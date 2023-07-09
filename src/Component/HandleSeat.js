@@ -72,8 +72,31 @@ export default class extends Component {
     }
   }
   render() {
+    let giatien = this.props.value.Giatien;
     return (
-      <div className="container d-flex flex-column">
+      <div className="container d-inline-block text-center">
+        <div className="in4ThanhToan">
+          <table className="table text-white">
+            <thead>
+              <tr>
+                <th>Họ Tên</th>
+                <th>Số Người</th>
+                <th>Vị Trí Ghế</th>
+                <th>Thành Tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{this.props.value.Username}</td>
+                <td>{this.props.value.Numseats}</td>
+                <td>{this.props.value.arrSeat}</td>
+                <td>
+                  {giatien?.reduce((acc, item) => acc * 1 + item * 1, [0])}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div className="btn_action">
           <button
             disabled={this.props.disBtnThanhToan}
@@ -92,6 +115,7 @@ export default class extends Component {
               <td width="30%">Họ Tên </td>
               <td>Số người </td>
               <td>Vị trí chỗ </td>
+              <td>Tổng tiền</td>
               <td>Action</td>
             </tr>
             {this.state.arrThanhToan.map((item, index) => {
@@ -105,6 +129,12 @@ export default class extends Component {
                         return item1 + " ";
                       })
                       .sort()}
+                  </td>
+                  <td>
+                    {item.Giatien?.reduce(
+                      (acc, item) => acc * 1 + item * 1,
+                      [0]
+                    )}
                   </td>
                   <td>
                     <button

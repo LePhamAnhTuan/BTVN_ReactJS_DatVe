@@ -5,7 +5,7 @@ import { saveLocal, getLocal, removeLocal } from "./LocalStorage";
 
 export default class Layout extends Component {
   state = {
-    value: { Username: "", Numseats: "", arrSeat: [] },
+    value: { Username: "", Numseats: "", Giatien: [], arrSeat: [] },
     qualitySeat: 0,
     disabledInput: false,
     disabledBtn: true,
@@ -42,7 +42,7 @@ export default class Layout extends Component {
     document.getElementById("Numseats").disabled = false;
     this.setState({
       ...this.state,
-      value: { Username: "", Numseats: "", arrSeat: [] },
+      value: { Username: "", Numseats: "", Giatien: [], arrSeat: [] },
       qualitySeat: 0,
 
       error: "",
@@ -78,7 +78,7 @@ export default class Layout extends Component {
     window.scrollTo(0, 0);
     this.setState({
       ...this.state,
-      value: { Username: "", Numseats: "", arrSeat: [] },
+      value: { Username: "", Numseats: "", Giatien: [], arrSeat: [] },
       qualitySeat: 0,
       disabledInput: false,
       disabledBtn: true,
@@ -108,23 +108,47 @@ export default class Layout extends Component {
   };
 
   getChecked = (event) => {
-    let { checked, value } = event.target;
-
-    let newValue = this.state.value.arrSeat;
+    // let { checked, value } = event.target;
+    // let newValue = this.state.value.arrSeat;
+    // if (checked) {
+    //   this.state.value.arrSeat.push(value);
+    //   this.setState({
+    //     ...this.state,
+    //     qualitySeat: this.state.qualitySeat + 1,
+    //   });
+    // } else if (checked == false) {
+    //   let arrNew = newValue.filter((item) => item !== value);
+    //   this.setState({
+    //     ...this.state,
+    //     qualitySeat: this.state.qualitySeat - 1,
+    //     value: {
+    //       ...this.state.value,
+    //       arrSeat: arrNew,
+    //     },
+    //   });
+    // }
+    /////
+    let { checked, id, value } = event.target;
+    console.log("value: ", value);
+    let newId = this.state.value.arrSeat;
+    let newValue = this.state.value.Giatien;
     if (checked) {
-      this.state.value.arrSeat.push(value);
+      newId.push(id);
+      newValue.push(value);
       this.setState({
         ...this.state,
         qualitySeat: this.state.qualitySeat + 1,
       });
     } else if (checked == false) {
-      let arrNew = newValue.filter((item) => item !== value);
+      let arrNew = newId.filter((item) => item !== id);
+      newValue.push(-value);
       this.setState({
         ...this.state,
         qualitySeat: this.state.qualitySeat - 1,
         value: {
           ...this.state.value,
           arrSeat: arrNew,
+          Giatien: newValue,
         },
       });
     }
@@ -158,7 +182,7 @@ export default class Layout extends Component {
           </div>
 
           <h1>Movie Seat Selection</h1>
-          <div className="container ">
+          <div className="container">
             <div className="w3ls-reg">
               <div className="inputForm">
                 <h2>Nhập thông tin cá nhân và chọn số chỗ</h2>
@@ -246,8 +270,7 @@ export default class Layout extends Component {
                                   onChange={this.getChecked}
                                   type="checkbox"
                                   className="seats"
-                                  // checked={defaultValue == "A1" ? true : false}
-                                  defaultValue={item1.soGhe}
+                                  value={item1.gia}
                                 />
                               </td>
                             );
